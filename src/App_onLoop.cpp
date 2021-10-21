@@ -6,13 +6,15 @@
 
 void App::onLoop() {
 
+    // Reinitialize QuadTree each frame and populate it
     QuadTree<Boid> quadTree{ m_boundingBox };
 
     for (auto &b: m_boids) {
-        auto pos = b.getPosition();
-        auto point = QuadTreeDataPoint<Boid>{ pos.x, pos.y, &b };
+        auto point = QuadTreeDataPoint<Boid>{ b.getPosition().x, b.getPosition().y, &b };
         quadTree.insert(point);
     }
+
+    // Update each boid
     for (auto &b: m_boids) {
         b.loop(quadTree);
     }

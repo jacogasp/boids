@@ -38,6 +38,8 @@ private:
 
     void onCleanUp();
 
+private:
+    void updateSliders(const sf::Vector2f &mousePosition);
 };
 
 

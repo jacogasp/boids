@@ -31,61 +31,28 @@ void Boid::loop(QuadTree<Boid> &quadTree) {
     std::vector<QuadTreeDataPoint<Boid> *> result;
     quadTree.query(bb, result);
 
+    // Result will be always of size = 1, because the boid itself
     if (result.size() > 1)
         flock(result);
 
+    // Rotate towards current direction
     auto steeringAngle = 180 - rad2deg(std::atan2(m_velocity.x, m_velocity.y));
     setRotation(steeringAngle);
 
     // Sum all forces
     m_velocity += m_acceleration;
 
-
     // Clip velocity
-    if (m_velocity.x > Physics::maxSpeed)
-        m_velocity.x = Physics::maxSpeed;
+    limitMagnitude(m_velocity, Physics::maxSpeed);
 
-    if (m_velocity.y > Physics::maxSpeed)
-        m_velocity.y = Physics::maxSpeed;
-
-
+    // Move the boid
     auto offset = m_velocity * deltaT;
     move(offset);
     checkEdges();
 
-
+    // Clean up
     m_acceleration *= 0.f;
-
     m_clock.restart();
-}
-
-// Alignment
-void Boid::alignTo(const Boid &neighbour) {
-    auto desiredDirection = neighbour.m_velocity - m_velocity;
-    m_acceleration += environment.alignment * normalize(desiredDirection);
-}
-
-// Cohesion
-void Boid::attractedTo(const Boid &neighbour) {
-    auto desiredDirection = neighbour.getPosition() - getPosition();
-    auto d = getMagnitude(desiredDirection);
-
-    // Clip distance to avoid zero division
-    if (d < 10)
-        d = 10;
-
-    m_acceleration += environment.cohesion * normalize(desiredDirection) / d;
-}
-
-// Repulsion
-void Boid::separateFrom(const Boid &neighbour) {
-    auto desiredDirection = neighbour.getPosition() - getPosition();
-    auto d = getMagnitude(desiredDirection);
-
-    if (d > repulsionRange)
-        return;
-
-    m_acceleration -= environment.separation * normalize(desiredDirection) / d;
 }
 
 void Boid::applyForce(const sf::Vector2f &f) {

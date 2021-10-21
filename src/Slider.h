@@ -17,23 +17,32 @@ public:
 
 private:
     sf::CircleShape m_circle{ 12 };
-    sf::RectangleShape m_rect{ { 200, 2 } };
+    sf::RectangleShape m_rect;
+    float m_lowerLimit = 0.f;
+    float m_upperLimit = 200.f;
 
+    bool m_bIsDragging = false;
     float m_value = 0.5;
     Slider::Type m_type;
 
 public:
 
-    bool isDragging = false;
+    // Constructors
+    explicit Slider(Type type, float width = 200);
 
-    explicit Slider(Type type);
-
+    // Getters
     sf::Vector2f getSize() const;
 
     float getValue() const;
 
     Slider::Type getType() const;
 
+    bool isDragging() const;
+
+    // Setters
+    void isDragging(bool value);
+
+    // Helpers
     void draw(sf::RenderTarget &target, sf::RenderStates states) const override;
 
     bool hit(const sf::Vector2f &position);

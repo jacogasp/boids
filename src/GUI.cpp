@@ -5,7 +5,6 @@
 #include "GUI.h"
 
 GUI::GUI() {
-
     auto offset = (Resolution::WIDTH - sliders[0].getSize().x) / 3.f;
 
     for (int i = 0; i < sliders.size(); ++i) {
