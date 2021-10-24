@@ -1,6 +1,8 @@
 add_executable(
         VectorMathTest VectorMathTest.cpp
-        ../src/VectorsMath.h
 )
+
+target_include_directories(VectorMathTest PUBLIC ../include)
+target_include_directories(VectorMathTest PRIVATE ../src)
 
 target_link_libraries(VectorMathTest sfml-graphics)
