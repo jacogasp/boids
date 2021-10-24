@@ -8,18 +8,21 @@
 #include <SFML/Graphics.hpp>
 #include <array>
 
-#include "Constants.h"
+#include "Params.h"
 #include "Slider.h"
 
 struct GUI : public sf::Drawable {
+private:
+    Params m_params;
 
+public:
     std::array<Slider, 3> sliders{
             Slider(Slider::Type::cohesion),
             Slider(Slider::Type::separation),
             Slider(Slider::Type::alignment)
     };
 
-    GUI();
+    explicit GUI(Params &params);
 
     void draw(sf::RenderTarget &target, sf::RenderStates states) const override;
 };

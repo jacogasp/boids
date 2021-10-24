@@ -18,8 +18,7 @@ add_executable(
         src/Boid.cpp
         src/Slider.cpp
         src/GUI.cpp
-        src/Environment.cpp
-)
+        src/Params.cpp src/Params.h)
 target_include_directories(Boids PUBLIC include)
 target_include_directories(Boids PRIVATE src)
 target_link_libraries(Boids sfml-graphics)

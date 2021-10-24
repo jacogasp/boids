@@ -4,7 +4,10 @@
 
 #include <Boids/App.h>
 
-App::App() : m_window(sf::VideoMode(Resolution::WIDTH, Resolution::HEIGHT), "Boids") {
+App::App() :
+m_window(sf::VideoMode(m_params.windowWidth(), m_params.windowHeight()), "Boids"),
+m_gui(m_params)
+{
     m_window.setVerticalSyncEnabled(true);
 }
 

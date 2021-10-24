@@ -23,7 +23,7 @@ private:
     float m_upperLimit = 200.f;
 
     bool m_bIsDragging = false;
-    float m_value = 0.5;
+    float m_value = 0.f;
 
 public:
 

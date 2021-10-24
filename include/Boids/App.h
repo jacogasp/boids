@@ -7,18 +7,20 @@
 
 #include <SFML/Graphics.hpp>
 #include <QuadTree/QuadTree.h>
-#include <array>
+#include <vector>
 #include <random>
 
-#include "Constants.h"
 #include "Boid.h"
 #include "GUI.h"
 
 class App {
 private:
+    Params m_params{};
     sf::Event m_event{};
-    std::array<Boid, 1000> m_boids{};
-    BoundingBox m_boundingBox{ 10, 10, Resolution::WIDTH - 10, Resolution::HEIGHT - 10};
+    std::vector<Boid> m_boids;
+    BoundingBox m_boundingBox{ m_params.margin(), m_params.margin(),
+                               static_cast<float>(m_params.windowWidth()) - m_params.margin(),
+                               static_cast<float>(m_params.windowHeight()) - m_params.margin()};
     sf::RenderWindow m_window;
     GUI m_gui;
 

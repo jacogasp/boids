@@ -16,16 +16,21 @@ void Boid::setVelocity(const sf::Vector2f &velocity) {
     m_velocity = velocity;
 }
 
+void Boid::setParams(Params *params) {
+    m_params = params;
+}
+
+
 void Boid::loop(QuadTree<Boid> &quadTree) {
     float deltaT = m_clock.getElapsedTime().asSeconds();
 
     auto pos = getPosition();
 
     BoundingBox bb{
-            pos.x - visionRange * .5f,
-            pos.y - visionRange * .5f,
-            pos.x + visionRange * .5f,
-            pos.y + visionRange * .5f
+            pos.x - m_params->visionRange() * .5f,
+            pos.y - m_params->visionRange() * .5f,
+            pos.x + m_params->visionRange() * .5f,
+            pos.y + m_params->visionRange() * .5f
     };
 
     std::vector<QuadTreeDataPoint<Boid> *> result;
@@ -35,20 +40,23 @@ void Boid::loop(QuadTree<Boid> &quadTree) {
     if (result.size() > 1)
         flock(result);
 
-    // Rotate towards current direction
-    auto steeringAngle = 180 - sf::rad2deg(std::atan2(m_velocity.x, m_velocity.y));
-    setRotation(steeringAngle);
-
     // Sum all forces
     m_velocity += m_acceleration;
 
     // Clip velocity
-    limitMagnitude(m_velocity, Physics::maxSpeed);
+    normalize(m_velocity);
+
+    // Rotate towards current direction
+    auto currentAngle = getRotation();
+    auto desiredAngle = 180.f - sf::rad2deg(std::atan2(m_velocity.x, m_velocity.y));
+    auto steeringAngle = currentAngle + (desiredAngle - currentAngle) * deltaT * Params::turnFactor;
+    setRotation( steeringAngle);
+//    rotate
 
     // Move the boid
-    auto offset = m_velocity * deltaT;
-    move(offset);
     checkEdges();
+    auto offset = m_velocity * Params::simulationSpeed * deltaT;
+    move(offset);
 
     // Clean up
     m_acceleration *= 0.f;
@@ -77,7 +85,7 @@ void Boid::flock(const std::vector<QuadTreeDataPoint<Boid> *> &neighbours) {
         Boid neighbour = *bPtr->data;
 
         // Check if in vision range
-        if (abs(sf::angleBetween(m_velocity, neighbour.m_velocity)) > visionAngle)
+        if (abs(sf::angleBetween(m_velocity, neighbour.m_velocity)) > m_params->visionAngle())
             continue;
         // Cohesion
         centerOfMass += neighbour.getPosition();
@@ -86,7 +94,7 @@ void Boid::flock(const std::vector<QuadTreeDataPoint<Boid> *> &neighbours) {
         // Repulsion
         float distance{ sf::distanceBetween(getPosition(), neighbour.getPosition()) };
 
-        if (distance < environment.separation * 10.f) {
+        if (distance < m_params->repulsionRange()) {
             avgRepulsion += getPosition() - neighbour.getPosition();
             ++separationCount;
         }
@@ -101,11 +109,12 @@ void Boid::flock(const std::vector<QuadTreeDataPoint<Boid> *> &neighbours) {
 
 //    std::cout << "CM " << centerOfMass;
 
-    auto cohesionForce = sf::normalizeCopy(centerOfMass - getPosition()) * environment.cohesion;
-    auto alignmentForce = sf::normalizeCopy(avgVelocity / fNumOfBoids - m_velocity) * environment.alignment;
+    auto cohesionForce = sf::normalizeCopy(centerOfMass - getPosition()) * m_params->cohesion();
+    auto alignmentForce = sf::normalizeCopy(avgVelocity / fNumOfBoids - m_velocity) * m_params->alignment();
 
     if (separationCount > 0) {
-        auto separationForce = sf::normalizeCopy(avgRepulsion / static_cast<float>(separationCount)) * 50.f;
+        auto separationForce = sf::normalizeCopy(avgRepulsion / static_cast<float>(separationCount));
+        separationForce *= m_params->separation();
         applyForce(separationForce);
     }
 
@@ -116,20 +125,27 @@ void Boid::flock(const std::vector<QuadTreeDataPoint<Boid> *> &neighbours) {
 
 // Bounce agent on edges
 void Boid::checkEdges() {
+    float turnFactor = 0.05f;
 
-    if (getPosition().x < Resolution::BOUNDING_BOX.x0) {
-        setPosition(Resolution::BOUNDING_BOX.x0, getPosition().y);
-        m_velocity.x *= -1;
-    } else if (getPosition().x > Resolution::BOUNDING_BOX.x1) {
-        setPosition(Resolution::BOUNDING_BOX.x1, getPosition().y);
-        m_velocity.x *= -1;
+    float leftMargin = m_params->margin();
+    float rightMargin = static_cast<float>(m_params->windowWidth()) - m_params->margin();
+    float topMargin = m_params->margin();
+    float bottomMargin = static_cast<float>(m_params->windowHeight()) - m_params->margin();
+
+    if (getPosition().x < leftMargin) {
+//        setPosition(leftMargin, getPosition().y);
+        m_velocity.x += turnFactor;
+    } else if (getPosition().x > rightMargin) {
+//        setPosition(rightMargin, getPosition().y);
+        m_velocity.x -= turnFactor;
     }
 
-    if (getPosition().y < Resolution::BOUNDING_BOX.y0) {
-        setPosition(getPosition().x, Resolution::BOUNDING_BOX.y0);
-        m_velocity.y *= -1;
-    } else if (getPosition().y > Resolution::BOUNDING_BOX.y1) {
-        setPosition(getPosition().x, Resolution::BOUNDING_BOX.y1);
-        m_velocity.y *= -1;
+    if (getPosition().y < topMargin) {
+//        setPosition(getPosition().x, topMargin);
+        m_velocity.y += turnFactor;
+    } else if (getPosition().y > bottomMargin) {
+//        setPosition(getPosition().x, bottomMargin);
+        m_velocity.y -= turnFactor;
     }
 }
+

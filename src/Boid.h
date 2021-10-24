@@ -10,28 +10,27 @@
 #include <Vectors/Vectors.h>
 #include <iostream>
 #include <cmath>
-#include "Constants.h"
-#include "Environment.h"
+#include "Params.h"
 
 class Boid : public sf::ConvexShape {
 
 private:
-    static constexpr float visionAngle = 90 * Physics::PI / 180;
-    static constexpr int   visionRange = 50;
-    static constexpr float repulsionRange = 30;
-
-    static constexpr float width = 10;
-    static constexpr float height = 20;
+    static constexpr float width = 5;
+    static constexpr float height = 10;
 
     sf::Vector2f m_acceleration{ 0, 0 };
     sf::Vector2f m_velocity{ 0.f, 0.f };
 
     sf::Clock m_clock;
+    Params *m_params;
+
 
 public:
-    Boid();
+    explicit Boid();
 
     void setVelocity(const sf::Vector2f &velocity);
+
+    void setParams(Params *params);
 
 public:
 

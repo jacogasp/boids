@@ -3,7 +3,6 @@
 //
 
 #include <Boids/App.h>
-#include "Environment.h"
 
 void App::onEvent() {
     switch (m_event.type) {
@@ -38,16 +37,16 @@ void App::updateSliders(const sf::Vector2f &mousePosition) {
 
             switch (slider.getType()) {
                 case Slider::Type::cohesion:
-                    environment.cohesion = Physics::maxCohesion * slider.getValue();
-                    std::cout << "Cohesion: " << environment.cohesion << '\n';
+                    m_params.cohesion(Params::maxCohesion * slider.getValue());
+                    std::cout << "Cohesion: " << m_params.cohesion() << '\n';
                     break;
                 case Slider::Type::separation:
-                    environment.separation = Physics::maxSeparation * slider.getValue();
-                    std::cout << "Separation: " << environment.separation << '\n';
+                    m_params.separation(Params::maxSeparation * slider.getValue());
+                    std::cout << "Separation: " << m_params.separation() << '\n';
                     break;
                 case Slider::Type::alignment:
-                    environment.alignment = Physics::maxAlignment * slider.getValue();
-                    std::cout << "Alignment: " << environment.alignment << '\n';
+                    m_params.alignment(Params::maxAlignment * slider.getValue());
+                    std::cout << "Alignment: " << m_params.alignment() << '\n';
                     break;
                 default:;
             }

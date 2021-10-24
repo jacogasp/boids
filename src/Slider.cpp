@@ -12,7 +12,7 @@ Slider::Slider(Type type, float width) :
 
     auto pos = getPosition();
     m_circle.setOrigin(m_circle.getRadius(), m_circle.getRadius());
-    m_circle.setPosition(pos.x + m_rect.getSize().x / 2, pos.y + m_rect.getSize().y / 2);
+    m_circle.setPosition(pos.x, pos.y + m_rect.getSize().y / 2);
 }
 
 // Getters

@@ -4,10 +4,10 @@
 
 #include "GUI.h"
 
-GUI::GUI() {
-    auto offset = (Resolution::WIDTH - sliders[0].getSize().x) / 3.f;
+GUI::GUI(Params &params) : m_params(params) {
+    auto offset = (static_cast<float>(m_params.windowWidth()) - sliders[0].getSize().x) / 3.f;
 
-    for (int i = 0; i < sliders.size(); ++i) {
+    for (size_t i = 0; i < sliders.size(); ++i) {
         sliders.at(i).setPosition({ offset * i + offset / 2.f, 50 });
     }
 }
@@ -15,6 +15,6 @@ GUI::GUI() {
 
 void GUI::draw(sf::RenderTarget &target, sf::RenderStates states) const {
     for (auto &slider: sliders)
-        target.draw(slider);
+        target.draw(slider, states);
 }
 
