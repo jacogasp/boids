@@ -7,9 +7,9 @@
 
 #include <SFML/Graphics.hpp>
 #include <QuadTree/QuadTree.h>
+#include <Vectors/Vectors.h>
 #include <iostream>
 #include <cmath>
-#include "VectorsMath.h"
 #include "Constants.h"
 #include "Environment.h"
 
@@ -34,12 +34,6 @@ public:
     void setVelocity(const sf::Vector2f &velocity);
 
 public:
-
-    void alignTo(const Boid &neighbour);
-
-    void attractedTo(const Boid &neighbour);
-
-    void separateFrom(const Boid &neighbour);
 
     void applyForce(const sf::Vector2f &f);
 

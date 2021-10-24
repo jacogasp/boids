@@ -36,7 +36,7 @@ void Boid::loop(QuadTree<Boid> &quadTree) {
         flock(result);
 
     // Rotate towards current direction
-    auto steeringAngle = 180 - rad2deg(std::atan2(m_velocity.x, m_velocity.y));
+    auto steeringAngle = 180 - sf::rad2deg(std::atan2(m_velocity.x, m_velocity.y));
     setRotation(steeringAngle);
 
     // Sum all forces
@@ -61,45 +61,55 @@ void Boid::applyForce(const sf::Vector2f &f) {
 
 void Boid::flock(const std::vector<QuadTreeDataPoint<Boid> *> &neighbours) {
 
-    sf::Vector2f centerOfMass{ 0, 0 };
-    sf::Vector2f avgVelocity{0, 0};
-    sf::Vector2f avgRepulsion{0, 0};
+    sf::Vector2f centerOfMass{ 0, 0};
+    sf::Vector2f avgVelocity{ 0, 0 };
+    sf::Vector2f avgRepulsion{ 0, 0 };
 
     int separationCount = 0;
+    int dNumOfBoids = 0;
+
+    assert(neighbours.size() > 1);
 
     for (auto &bPtr: neighbours) {
-        if (bPtr->data == this) continue;
-
-        auto neighbour = *bPtr->data;
-
-        // Check if in vision range
-        if (abs(angleBetween(m_velocity, neighbour.m_velocity)) > visionAngle)
+        if (bPtr->data == this)
             continue;
 
+        Boid neighbour = *bPtr->data;
+
+        // Check if in vision range
+        if (abs(sf::angleBetween(m_velocity, neighbour.m_velocity)) > visionAngle)
+            continue;
         // Cohesion
         centerOfMass += neighbour.getPosition();
         // Alignment
         avgVelocity += neighbour.m_velocity;
         // Repulsion
-
-        float distance{ distanceBetween(getPosition(), neighbour.getPosition()) };
+        float distance{ sf::distanceBetween(getPosition(), neighbour.getPosition()) };
 
         if (distance < environment.separation * 10.f) {
             avgRepulsion += getPosition() - neighbour.getPosition();
             ++separationCount;
         }
+
+        ++dNumOfBoids;
     }
+    if (dNumOfBoids == 0)
+        return;
 
-    auto fNumOfBoids = static_cast<float>(neighbours.size() - 1);
+    auto fNumOfBoids = static_cast<float>(dNumOfBoids);
+    centerOfMass /= fNumOfBoids;
 
-    auto cohesionForce = normalize(centerOfMass / fNumOfBoids - getPosition()) * environment.cohesion;
-    auto alignmentForce = (avgVelocity / fNumOfBoids - m_velocity) * environment.alignment;
+//    std::cout << "CM " << centerOfMass;
+
+    auto cohesionForce = sf::normalizeCopy(centerOfMass - getPosition()) * environment.cohesion;
+    auto alignmentForce = sf::normalizeCopy(avgVelocity / fNumOfBoids - m_velocity) * environment.alignment;
 
     if (separationCount > 0) {
-        auto separationForce = normalize(avgRepulsion / static_cast<float>(separationCount)) * 50.f;
+        auto separationForce = sf::normalizeCopy(avgRepulsion / static_cast<float>(separationCount)) * 50.f;
         applyForce(separationForce);
     }
 
+//    std::cout << " CF " << cohesionForce << '\n';
     applyForce(cohesionForce);
     applyForce(alignmentForce);
 }

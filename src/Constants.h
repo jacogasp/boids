@@ -16,7 +16,7 @@ namespace Resolution {
 namespace Physics {
     constexpr float maxSpeed = 100;
     constexpr float PI = 3.1415926535f;
-    constexpr float maxCohesion = 2.f;
+    constexpr float maxCohesion = 10.f;
     constexpr float maxAlignment = 2.f;
     constexpr float maxSeparation = 2.f;
 }

@@ -17,7 +17,7 @@
 class App {
 private:
     sf::Event m_event{};
-    std::array<Boid, 100> m_boids{};
+    std::array<Boid, 1000> m_boids{};
     BoundingBox m_boundingBox{ 10, 10, Resolution::WIDTH - 10, Resolution::HEIGHT - 10};
     sf::RenderWindow m_window;
     GUI m_gui;

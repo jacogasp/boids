@@ -4,6 +4,7 @@ project(Boids)
 set(CMAKE_CXX_STANDARD 17)
 
 find_package(SFML COMPONENTS graphics window system REQUIRED)
+add_compile_options(-Wall -Wextra)
 
 add_executable(
         Boids
@@ -15,14 +16,8 @@ add_executable(
         src/App_onRender.cpp
         src/App_onCleanup.cpp
         src/Boid.cpp
-        src/Boid.h
-        src/VectorsMath.h
-        src/Constants.h
-        src/Slider.h
         src/Slider.cpp
-        src/GUI.h
         src/GUI.cpp
-        src/Environment.h
         src/Environment.cpp
 )
 target_include_directories(Boids PUBLIC include)
