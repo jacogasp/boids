@@ -69,7 +69,7 @@ public:
         southWest = std::make_unique<QuadTreeNode>(sw);
     }
 
-    bool insert(const QuadTreeDataPoint<T>& data) {
+    bool insert(const QuadTreeDataPoint<T> &data) {
 
         // Ignore objects that do not belong to this node
         if (!m_boundingBox.contains(data))
@@ -98,7 +98,7 @@ public:
         return false;
     }
 
-    void query(const BoundingBox &box, std::vector<QuadTreeDataPoint<T>*> &result) {
+    void query(const BoundingBox &box, std::vector<QuadTreeDataPoint<T> *> &result) {
 
         // Automatically abort if the range does not intersect this quad
         if (!m_boundingBox.intersects(box))
@@ -121,10 +121,10 @@ public:
     }
 };
 
-template <typename T>
+template<typename T>
 class QuadTree : public QuadTreeNode<T> {
 public:
-   using QuadTreeNode<T>::QuadTreeNode;
+    using QuadTreeNode<T>::QuadTreeNode;
 };
 
 
