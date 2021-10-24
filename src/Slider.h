@@ -16,6 +16,7 @@ public:
     };
 
 private:
+    Slider::Type m_type;
     sf::CircleShape m_circle{ 12 };
     sf::RectangleShape m_rect;
     float m_lowerLimit = 0.f;
@@ -23,7 +24,6 @@ private:
 
     bool m_bIsDragging = false;
     float m_value = 0.5;
-    Slider::Type m_type;
 
 public:
 
