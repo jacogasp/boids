@@ -3,6 +3,7 @@
 //
 
 #include "Boid.h"
+#include <cassert>
 
 Boid::Boid() {
     setPointCount(3);

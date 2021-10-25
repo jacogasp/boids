@@ -22,7 +22,7 @@ private:
     sf::Vector2f m_velocity{ 0.f, 0.f };
 
     sf::Clock m_clock;
-    Params *m_params;
+    Params *m_params{};
 
 
 public:
